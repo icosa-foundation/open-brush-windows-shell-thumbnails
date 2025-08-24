@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: Restore NuGet packages
+      run: nuget restore Voxels.sln
+
+    - name: Install WiX Toolset
+      run: choco install wixtoolset --version 3.11.2 -y
+
+    - name: Build solution
+      run: msbuild Voxels.sln /p:Configuration=Release
+
+    - name: Run tests
+      run: |
+        vstest.console Voxels.Test\\bin\\Release\\Voxels.Test.dll
+
+    - name: Build setup project
+      run: msbuild Voxels.Setup\\Voxels.Setup.wixproj /p:Configuration=Release
+
+    - name: Upload installer
+      uses: actions/upload-artifact@v3
+      with:
+        name: Voxels.Setup
+        path: Voxels.Setup\\bin\\Release\\Voxels.Setup.exe
