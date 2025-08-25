@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Voxels.ShellExtensions")]
+[assembly: AssemblyTitle("OpenBrush.ShellExtensions")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Arlorean")]
-[assembly: AssemblyProduct("Voxels.ShellExtensions")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("OpenBrush.ShellExtensions")]
 [assembly: AssemblyCopyright("Copyright © Adam Davidson 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
