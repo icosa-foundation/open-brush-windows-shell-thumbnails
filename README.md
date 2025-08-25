@@ -7,3 +7,8 @@ miniature of the sketch.
 
 The implementation is based on SharpShell and targets the .NET Framework 4.8. The voxel
 format handlers from the original template have been removed.
+
+## Installing
+
+Each GitHub Actions build produces a `OpenBrushShellExtensionsSetup.exe` artifact. Run the
+executable to register the shell extension, or run it with `/uninstall` to remove it.

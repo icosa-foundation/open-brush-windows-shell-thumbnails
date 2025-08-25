@@ -30,6 +30,9 @@ jobs:
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v2
 
+      - name: Install ILMerge
+        run: choco install ilmerge -y
+
       - name: Verify tools
         run: |
           dotnet --version
@@ -41,3 +44,13 @@ jobs:
 
       - name: Build solution
         run: msbuild OpenBrush.sln /p:Configuration=Release
+
+      - name: Merge installer
+        run: |
+          ilmerge /out:OpenBrushShellExtensionsSetup.exe "OpenBrush.ShellExtensions.Setup\\bin\\Release\\OpenBrush.ShellExtensions.Setup.exe" "OpenBrush.ShellExtensions\\bin\\Release\\OpenBrush.ShellExtensions.dll"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenBrushShellExtensionsSetup
+          path: OpenBrushShellExtensionsSetup.exe
