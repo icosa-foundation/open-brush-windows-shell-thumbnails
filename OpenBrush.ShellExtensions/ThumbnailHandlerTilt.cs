@@ -6,7 +6,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 
-namespace Voxels.ShellExtensions {
+namespace OpenBrush.ShellExtensions {
     [ComVisible(true)]
     [COMServerAssociation(AssociationType.FileExtension, ".tilt")]
     public class ThumbnailHandlerTilt : SharpThumbnailHandler {

@@ -37,24 +37,7 @@ jobs:
           msbuild -version
 
       - name: Restore NuGet packages
-        run: nuget restore Voxels.sln
-
-      - name: Install WiX Toolset
-        run: choco install wixtoolset --version 3.11.2 -y --allow-downgrade
+        run: nuget restore OpenBrush.sln
 
       - name: Build solution
-        run: msbuild Voxels.sln /p:Configuration=Release
-
-      - name: Run tests
-        run: |
-          dotnet test Voxels.Test\\Voxels.Test.csproj `
-            --no-build --configuration Release
-
-      - name: Build setup project
-        run: msbuild Voxels.Setup\\Voxels.Setup.wixproj /p:Configuration=Release
-
-      - name: Upload installer
-        uses: actions/upload-artifact@v4
-        with:
-          name: Voxels.Setup
-          path: Voxels.Setup\\bin\\Release\\Voxels.Setup.exe
+        run: msbuild OpenBrush.sln /p:Configuration=Release
