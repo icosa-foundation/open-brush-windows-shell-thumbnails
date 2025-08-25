@@ -38,7 +38,7 @@ jobs:
         run: nuget restore Voxels.sln
 
       - name: Install WiX Toolset
-        run: choco install wixtoolset --version 3.11.2 -y
+        run: choco install wixtoolset --version 3.11.2 -y --allow-downgrade
 
       - name: Build solution
         run: msbuild Voxels.sln /p:Configuration=Release
