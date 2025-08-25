@@ -30,6 +30,9 @@ jobs:
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v2
 
+      - name: Install ILMerge
+        run: choco install ilmerge -y
+
       - name: Verify tools
         run: |
           dotnet --version
@@ -37,24 +40,17 @@ jobs:
           msbuild -version
 
       - name: Restore NuGet packages
-        run: nuget restore Voxels.sln
-
-      - name: Install WiX Toolset
-        run: choco install wixtoolset --version 3.11.2 -y --allow-downgrade
+        run: nuget restore OpenBrush.sln
 
       - name: Build solution
-        run: msbuild Voxels.sln /p:Configuration=Release
+        run: msbuild OpenBrush.sln /p:Configuration=Release
 
-      - name: Run tests
+      - name: Merge installer
         run: |
-          dotnet test Voxels.Test\\Voxels.Test.csproj `
-            --no-build --configuration Release
+          ilmerge /targetplatform:"v4,%ProgramFiles(x86)%\\Reference Assemblies\\Microsoft\\Framework\\.NETFramework\\v4.8" /out:OpenBrushShellExtensionsSetup.exe "OpenBrush.ShellExtensions.Setup\\bin\\Release\\OpenBrush.ShellExtensions.Setup.exe" "OpenBrush.ShellExtensions\\bin\\Release\\OpenBrush.ShellExtensions.dll"
 
-      - name: Build setup project
-        run: msbuild Voxels.Setup\\Voxels.Setup.wixproj /p:Configuration=Release
-
-      - name: Upload installer
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Voxels.Setup
-          path: Voxels.Setup\\bin\\Release\\Voxels.Setup.exe
+          name: OpenBrushShellExtensionsSetup
+          path: OpenBrushShellExtensionsSetup.exe
