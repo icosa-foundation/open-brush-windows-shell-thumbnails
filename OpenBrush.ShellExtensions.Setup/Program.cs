@@ -10,7 +10,9 @@ namespace OpenBrush.ShellExtensions.Setup
         private static void Main(string[] args)
         {
             var server = new ThumbnailHandlerTilt();
-            var regType = RegistrationType.OS32BitAnd64Bit;
+            var regType = Environment.Is64BitOperatingSystem
+                ? RegistrationType.OS64Bit
+                : RegistrationType.OS32Bit;
 
             if (args.Length > 0 && args[0].Equals("/uninstall", StringComparison.OrdinalIgnoreCase))
             {
