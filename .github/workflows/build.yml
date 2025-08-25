@@ -47,7 +47,8 @@ jobs:
 
       - name: Run tests
         run: |
-          vstest.console Voxels.Test\\bin\\Release\\Voxels.Test.dll
+          dotnet test Voxels.Test\\Voxels.Test.csproj `
+            --no-build --configuration Release
 
       - name: Build setup project
         run: msbuild Voxels.Setup\\Voxels.Setup.wixproj /p:Configuration=Release
