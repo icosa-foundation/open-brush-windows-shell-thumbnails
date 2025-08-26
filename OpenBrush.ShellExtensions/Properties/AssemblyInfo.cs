@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("VoxelsCommandLine")]
+[assembly: AssemblyTitle("OpenBrush.ShellExtensions")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Arlorean")]
-[assembly: AssemblyProduct("VoxelsCommandLine")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("OpenBrush.ShellExtensions")]
 [assembly: AssemblyCopyright("Copyright © Adam Davidson 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1e4d9af1-41e1-4c81-9d9a-ef22f101e69f")]
+[assembly: Guid("f8a32354-da2b-406c-aebe-dcefd85fd033")]
 
 // Version information for an assembly consists of the following four values:
 //
