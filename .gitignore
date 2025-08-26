@@ -13,8 +13,8 @@
 /Voxels.CommandLine/bin/Debug
 /Voxels.Installer/bin/Debug
 /Voxels.Installer/obj/Debug
-/Voxels.ShellExtensions/bin/Debug
-/Voxels.ShellExtensions/obj/Debug
+/OpenBrush.ShellExtensions/bin/Debug
+/OpenBrush.ShellExtensions/obj/Debug
 /Voxels.SkiaSharp/bin/Debug
 /Voxels.Test/bin/Debug
 /Voxels.Test/obj/Debug
@@ -24,8 +24,8 @@
 /Voxels.CommandLine/bin/Release/x86
 /Voxels.Installer/bin/Release
 /Voxels.Installer/obj/Release
-/Voxels.ShellExtensions/bin/Release
-/Voxels.ShellExtensions/obj/Release
+/OpenBrush.ShellExtensions/bin/Release
+/OpenBrush.ShellExtensions/obj/Release
 /Voxels.SkiaSharp/bin/Release
 /Voxels.SkiaSharp/obj
 /Voxels.Test/bin/Release
