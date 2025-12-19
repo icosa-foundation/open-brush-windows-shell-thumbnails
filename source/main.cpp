@@ -76,6 +76,32 @@ extern "C" HRESULT __stdcall DllRegisterServer()
 		RegCloseKey(CurKey);
 	}
 
+	// Ensure InProcServer32 has the module path set (some environments fail silently)
+	{
+		HKEY TiltServerKey = nullptr;
+		if( RegCreateKeyExW(
+				HKEY_CURRENT_USER,
+				L"Software\\Classes\\CLSID\\" TiltThumbHandlerCLSID L"\\InProcServer32",
+				0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, nullptr,
+				&TiltServerKey, nullptr
+			)
+			== ERROR_SUCCESS )
+		{
+			RegSetValueExW(
+				TiltServerKey, nullptr, 0, REG_SZ,
+				reinterpret_cast<const unsigned char*>(ModulePath),
+				static_cast<DWORD>((std::wcslen(ModulePath) + 1) * sizeof(wchar_t))
+			);
+			const wchar_t ThreadingModel[] = L"Apartment";
+			RegSetValueExW(
+				TiltServerKey, L"ThreadingModel", 0, REG_SZ,
+				reinterpret_cast<const unsigned char*>(ThreadingModel),
+				static_cast<DWORD>((std::wcslen(ThreadingModel) + 1) * sizeof(wchar_t))
+			);
+			RegCloseKey(TiltServerKey);
+		}
+	}
+
 	// Further configure the Tilt thumbnail-handler
 	{
 
