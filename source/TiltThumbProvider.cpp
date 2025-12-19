@@ -105,7 +105,7 @@ std::vector<std::byte>
 				);
 				COMPRESSOR_HANDLE Decompressor = nullptr;
 				if( CreateDecompressor(
-						COMPRESS_ALGORITHM_DEFLATE, nullptr, &Decompressor
+						COMPRESS_ALGORITHM_MSZIP, nullptr, &Decompressor
 					)
 					== FALSE )
 				{
@@ -206,9 +206,9 @@ HRESULT TiltThumbProvider::GetThumbnail(
 		|| static_cast<std::uint32_t>(cx)
 			< static_cast<std::uint32_t>(Height) )
 	{
-		const std::float_t Scale
-			= (std::min)(cx / static_cast<std::float_t>(Width),
-						 cx / static_cast<std::float_t>(Height));
+		const double Scale
+			= (std::min)(cx / static_cast<double>(Width),
+						 cx / static_cast<double>(Height));
 
 		const std::uint32_t NewWidth
 			= static_cast<std::uint32_t>(Width * Scale);
@@ -217,7 +217,6 @@ HRESULT TiltThumbProvider::GetThumbnail(
 
 		if( !NewWidth || !NewHeight )
 		{
-			stbi_image_free(DecodedPng);
 			return E_FAIL;
 		}
 
