@@ -14,7 +14,7 @@
 #pragma comment(lib, "Shlwapi.lib")
 #pragma comment(lib, "Ole32.lib")
 
-const wchar_t* ProviderGUID = L"{35788B9B-04AB-4B75-AB3A-1ED403AFC746}";
+const wchar_t* ProviderGUID = L"{F84FAE32-0FD7-495A-A67F-59DD28E39763}";
 
 using DllGetClassObjectT = HRESULT(const IID& rclsid, const IID& riid, void** ppv);
 
@@ -24,7 +24,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[])
 {
 	if( argc < 3 )
 	{
-		std::wprintf(L"Usage: %s (Sai File) (output.bmp)\n", argv[0]);
+		std::wprintf(L"Usage: %s (Tilt File) (output.bmp)\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 	GUID clsid;

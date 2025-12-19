@@ -62,7 +62,6 @@ foreach(
 endforeach(CurFlag)
 
 ### Dependencies
-add_subdirectory( external/libsai )
 add_subdirectory( external/mio EXCLUDE_FROM_ALL )
 
 ### Target
@@ -81,16 +80,15 @@ add_library(
 	source/stb_image.c
 
 	source/main.cpp
-	source/Sai1ThumbProvider.cpp
-	source/Sai2ThumbProvider.cpp
+	source/TiltThumbProvider.cpp
 	source/Globals.cpp
 )
 target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
-	sai
 	mio::mio
 	Shlwapi.lib
+	Cabinet.lib
 )
 
 configure_file(

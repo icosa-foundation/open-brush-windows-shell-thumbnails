@@ -1,6 +1,6 @@
 # SaiThumbs [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/Wunkolo/SaiThumbs/master/LICENSE)
 
-SaiThumbs is a Windows Shell extension that will allow image thumbnails for the `.sai`/`.sai2` files produced from [SYSTEMAX's PaintTool Sai](https://www.systemax.jp/en/sai/).
+SaiThumbs is a Windows Shell extension that will allow image thumbnails for `.tilt` sketch files produced by Tilt Brush-compatible tools. Explorer will display the `thumbnail.png` contained in each archive.
 
 ### [Download the latest release here!](https://wunkolo.itch.io/saithumbs)
 
