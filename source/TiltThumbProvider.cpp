@@ -9,7 +9,6 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <Shlwapi.h>
-#include <compressapi.h>
 #include <stb_image.h>
 #include <stb_image_resize2.h>
 
@@ -100,30 +99,21 @@ std::vector<std::byte>
 			}
 			else if( Header->CompressionMethod == ZipCompressionDeflate )
 			{
+				int   OutLen = 0;
+				auto  ZlibDecompressed = stbi_zlib_decode_malloc(
+                    reinterpret_cast<const char*>(FileBytes.data()),
+                    static_cast<int>(FileBytes.size()), &OutLen
+                );
+				if( ZlibDecompressed == nullptr || OutLen <= 0 )
+				{
+					return {};
+				}
+
 				std::vector<std::byte> Decompressed(
-					static_cast<std::size_t>(Header->UncompressedSize)
+					reinterpret_cast<std::byte*>(ZlibDecompressed),
+					reinterpret_cast<std::byte*>(ZlibDecompressed) + OutLen
 				);
-				COMPRESSOR_HANDLE Decompressor = nullptr;
-				if( CreateDecompressor(
-						COMPRESS_ALGORITHM_MSZIP, nullptr, &Decompressor
-					)
-					== FALSE )
-				{
-					return {};
-				}
-
-				size_t DecompressedSize = Decompressed.size();
-				const BOOL Success      = Decompress(
-					Decompressor, FileBytes.data(), FileBytes.size(),
-					Decompressed.data(), Decompressed.size(), &DecompressedSize
-				);
-				CloseCompressor(Decompressor);
-				if( Success == FALSE )
-				{
-					return {};
-				}
-
-				Decompressed.resize(DecompressedSize);
+				STBI_FREE(ZlibDecompressed);
 				return Decompressed;
 			}
 		}

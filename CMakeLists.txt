@@ -88,7 +88,6 @@ target_link_libraries(
 	PRIVATE
 	mio::mio
 	Shlwapi.lib
-	Cabinet.lib
 )
 
 configure_file(

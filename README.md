@@ -20,7 +20,7 @@ Between SaiThumbs installations and updates you ​may​ still see cached thumb
 
 ## Building (Windows / Visual Studio)
 
-1. Install [Visual Studio](https://visualstudio.microsoft.com/) with the **Desktop development with C++** workload. This pulls in MSVC, the Windows SDK (for `rc.exe`/`mt.exe` and `compressapi.h`), and CMake integration.
+1. Install [Visual Studio](https://visualstudio.microsoft.com/) with the **Desktop development with C++** workload. This pulls in MSVC, the Windows SDK (for `rc.exe`/`mt.exe`), and CMake integration.
 2. Open the **x64 Native Tools Command Prompt for VS** (or the architecture you need). This sets up environment variables so CMake can find the Windows SDK tools.
 3. From the repository root, generate build files with the Visual Studio generator and build the DLL:
    ```bat
