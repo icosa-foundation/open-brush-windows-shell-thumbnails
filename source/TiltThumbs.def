@@ -1,4 +1,4 @@
-LIBRARY	"SaiThumbs"
+LIBRARY	"TiltThumbs"
 
 EXPORTS
 	DllRegisterServer	PRIVATE

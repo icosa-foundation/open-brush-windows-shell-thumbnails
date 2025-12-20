@@ -30,7 +30,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[])
 	GUID clsid;
 	IIDFromString(ProviderGUID, &clsid);
 
-	const HMODULE DLLHandle = LoadLibraryA("SaiThumbs.dll");
+	const HMODULE DLLHandle = LoadLibraryA("TiltThumbs.dll");
 
 	if( !DLLHandle )
 	{

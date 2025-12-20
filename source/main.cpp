@@ -135,6 +135,31 @@ extern "C" HRESULT __stdcall DllRegisterServer()
 		RegCloseKey(CurKey);
 	}
 
+	// Set the Open Brush icon for .tilt files in HKLM (takes precedence)
+	// Format: "path\to\DLL,-ResourceID"
+	{
+		WCHAR IconPath[MAX_PATH + 10];
+		// TEMPORARY: Test with direct .ico path
+		wcscpy_s(IconPath, L"C:\\Users\\andyb\\Documents\\open-brush-windows-shell-thumbnails2\\resources\\openbrush-icon.ico");
+
+		HKEY IconKey;
+		if( RegCreateKeyExW(
+				HKEY_LOCAL_MACHINE,
+				L"SOFTWARE\\Classes\\Icosa.OpenBrush.File\\DefaultIcon",
+				0, nullptr, REG_OPTION_NON_VOLATILE, KEY_SET_VALUE, nullptr,
+				&IconKey, nullptr
+			)
+			== ERROR_SUCCESS )
+		{
+			RegSetValueExW(
+				IconKey, nullptr, 0, REG_SZ,
+				reinterpret_cast<const unsigned char*>(IconPath),
+				static_cast<DWORD>((std::wcslen(IconPath) + 1) * sizeof(wchar_t))
+			);
+			RegCloseKey(IconKey);
+		}
+	}
+
 	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
 	return S_OK;
 }

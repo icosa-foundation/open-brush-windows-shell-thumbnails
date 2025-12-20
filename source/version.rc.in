@@ -1,5 +1,8 @@
 #include <winver.h>
 
+// Open Brush icon resource
+1 ICON "@CMAKE_SOURCE_DIR@/resources/openbrush-icon.ico"
+
 VS_VERSION_INFO	VERSIONINFO
 	FILEVERSION     @BUILD_YEAR@,@BUILD_MONTH@,@BUILD_DAY@,0
 	FILEFLAGSMASK	0x17L

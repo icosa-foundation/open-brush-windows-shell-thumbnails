@@ -1,0 +1,6 @@
+// TiltThumbs Resources
+
+#include "resource.h"
+
+// Embed the Open Brush icon
+IDI_OPENBRUSH_ICON ICON "openbrush-icon.ico"
