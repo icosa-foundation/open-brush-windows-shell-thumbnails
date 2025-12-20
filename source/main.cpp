@@ -54,6 +54,7 @@ extern "C" HRESULT __stdcall DllRegisterServer()
 		{HKEY_CURRENT_USER, L"Software\\Classes\\CLSID\\" TiltThumbHandlerCLSID L"\\InProcServer32", nullptr,           REG_SZ, ModulePath},
 		{HKEY_CURRENT_USER, L"Software\\Classes\\CLSID\\" TiltThumbHandlerCLSID L"\\InProcServer32", L"ThreadingModel", REG_SZ, L"Apartment"},
 		{HKEY_CURRENT_USER, L"Software\\Classes\\" TiltThumbHandlerExtension L"\\ShellEx\\" IThumbnailProviderCLSID, nullptr, REG_SZ, TiltThumbHandlerCLSID},
+		{HKEY_CURRENT_USER, L"Software\\Classes\\" TiltThumbHandlerExtension, L"PerceivedType", REG_SZ, L"image"},
 		// clang-format on
 	};
 
