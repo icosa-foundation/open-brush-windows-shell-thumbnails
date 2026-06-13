@@ -11,8 +11,15 @@
 ; General
 
 Name "TiltThumbs"
-OutFile "TiltThumbs-Installer.exe"
+!ifndef INSTALLER_OUTFILE
+!define INSTALLER_OUTFILE "TiltThumbs-Installer.exe"
+!endif
+OutFile "${INSTALLER_OUTFILE}"
 Unicode True
+
+!ifndef INPUT_BIN_DIR
+!define INPUT_BIN_DIR "..\build\bin\Release"
+!endif
 
 ; Default installation folder
 InstallDir "$PROGRAMFILES64\TiltThumbs"
@@ -73,8 +80,8 @@ Section "Install"
     ${EndIf}
 
     ; Copy DLL file (overwrites old version)
-    File "..\build\bin\Release\TiltThumbs.dll"
-    File "..\build\bin\Release\overlay-icon.png"
+    File "${INPUT_BIN_DIR}\TiltThumbs.dll"
+    File "${INPUT_BIN_DIR}\overlay-icon.png"
 
     ; Register the new DLL
     DetailPrint "Registering TiltThumbs..."

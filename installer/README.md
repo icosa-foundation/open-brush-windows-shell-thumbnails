@@ -13,13 +13,14 @@ This directory contains the NSIS script for creating a user-friendly Windows ins
 ### Automated Method (Recommended)
 
 1. **Install NSIS** (one-time): https://nsis.sourceforge.io/Download
-2. **Regenerate CMake** (one-time):
+2. **Open a Visual Studio Developer Command Prompt** for x64.
+3. **Regenerate CMake** (one-time):
    ```bat
-   cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+   cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles"
    ```
-3. **Build with installer**:
+4. **Build with installer**:
    ```bat
-   cmake --build build --config Release --target installer
+   cmake --build build --target installer
    ```
 
 The installer will be created as `TiltThumbs-Installer.exe` in this directory.
@@ -28,7 +29,7 @@ The installer will be created as `TiltThumbs-Installer.exe` in this directory.
 
 1. Build TiltThumbs in Release mode:
    ```bat
-   cmake --build build --config Release
+   cmake --build build
    ```
 
 2. Right-click `TiltThumbs.nsi` and select **"Compile NSIS Script"**

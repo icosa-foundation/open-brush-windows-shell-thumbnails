@@ -144,9 +144,17 @@ find_program(MAKENSIS_EXE makensis.exe
 if(MAKENSIS_EXE)
 	message(STATUS "NSIS found: ${MAKENSIS_EXE}")
 
+	set(INSTALLER_OUTPUT "${CMAKE_SOURCE_DIR}/installer/TiltThumbs-Installer.exe")
+
 	# Add custom target to build installer
 	add_custom_target(installer
-		COMMAND "${MAKENSIS_EXE}" "${CMAKE_SOURCE_DIR}/installer/TiltThumbs.nsi"
+		COMMAND "${MAKENSIS_EXE}"
+			"/DINPUT_BIN_DIR=$<SHELL_PATH:$<TARGET_FILE_DIR:TiltThumbs>>"
+			"/DINSTALLER_OUTFILE=$<SHELL_PATH:$<TARGET_FILE_DIR:TiltThumbs>/TiltThumbs-Installer.exe>"
+			"${CMAKE_SOURCE_DIR}/installer/TiltThumbs.nsi"
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"$<TARGET_FILE_DIR:TiltThumbs>/TiltThumbs-Installer.exe"
+			"${INSTALLER_OUTPUT}"
 		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/installer"
 		DEPENDS TiltThumbs
 		COMMENT "Building NSIS installer..."
