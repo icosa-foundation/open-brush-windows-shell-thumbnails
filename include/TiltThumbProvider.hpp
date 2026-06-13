@@ -5,7 +5,9 @@
 #include <span>
 #include <vector>
 
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #include <Propsys.h>
 #include <thumbcache.h>
 

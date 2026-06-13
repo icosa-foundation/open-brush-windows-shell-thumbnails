@@ -126,7 +126,7 @@ TiltThumbs extracts `thumbnail.png` and overlays the Open Brush logo.
 
 ## 🤝 Contributing
 
-Contributions are welcome! This project is based on the original [SaiThumbs](https://github.com/Wunkolo/SaiThumbs) by Wunkolo, adapted for Open Brush / Tilt Brush files.
+Contributions are welcome. This project adapts Wunkolo's Windows thumbnail provider work for Open Brush / Tilt Brush files.
 
 ## 📝 License
 
@@ -134,6 +134,6 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 ## 🙏 Credits
 
-- Original SaiThumbs project by [Wunkolo](https://github.com/Wunkolo)
+- Original Windows thumbnail provider work by [Wunkolo](https://github.com/Wunkolo)
 - Open Brush logo and branding by the [Open Brush team](https://openbrush.app)
 - Built for the [Open Brush](https://openbrush.app) community

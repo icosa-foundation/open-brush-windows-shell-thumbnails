@@ -36,20 +36,20 @@ jobs:
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles"
 
       - name: Build
-        run: cmake --build ${{github.workspace}}/build --config Release --target SaiThumbs --parallel 8
+        run: cmake --build ${{github.workspace}}/build --config Release --target TiltThumbs --parallel 8
 
       - name: Zipping artifacts
         run: >
-          7z a SaiThumbs-${{matrix.arch}}.zip
+          7z a TiltThumbs-${{matrix.arch}}.zip
           ${{github.workspace}}/build/bin/install.bat
           ${{github.workspace}}/build/bin/uninstall.bat
-          ${{github.workspace}}/build/bin/SaiThumbs.dll
+          ${{github.workspace}}/build/bin/TiltThumbs.dll
 
       - uses: actions/upload-artifact@v4
         with:
-          name: SaiThumbs-${{matrix.arch}}
+          name: TiltThumbs-${{matrix.arch}}
           path: |
-            SaiThumbs-${{matrix.arch}}.zip
+            TiltThumbs-${{matrix.arch}}.zip
 
   create-release:
     if: github.ref == 'refs/heads/main'
