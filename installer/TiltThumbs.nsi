@@ -74,6 +74,7 @@ Section "Install"
 
     ; Copy DLL file (overwrites old version)
     File "..\build\bin\Release\TiltThumbs.dll"
+    File "..\build\bin\Release\overlay-icon.png"
 
     ; Register the new DLL
     DetailPrint "Registering TiltThumbs..."
@@ -121,6 +122,7 @@ Section "Uninstall"
 
     ; Delete files
     Delete "$INSTDIR\TiltThumbs.dll"
+    Delete "$INSTDIR\overlay-icon.png"
     Delete "$INSTDIR\Uninstall.exe"
 
     ; Remove directory

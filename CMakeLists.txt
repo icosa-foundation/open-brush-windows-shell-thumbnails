@@ -103,6 +103,14 @@ configure_file(
 	COPYONLY
 )
 
+
+add_custom_command(
+	TARGET TiltThumbs POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		"${CMAKE_SOURCE_DIR}/resources/overlay-icon.png"
+		"$<TARGET_FILE_DIR:TiltThumbs>/overlay-icon.png"
+)
+
 execute_process(
 	COMMAND git rev-parse --short HEAD
 	OUTPUT_VARIABLE GIT_HASH

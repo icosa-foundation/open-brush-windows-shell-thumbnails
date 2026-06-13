@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -48,6 +49,171 @@ namespace
 	constexpr std::uint32_t ZipLocalFileHeaderSignature = 0x04034B50;
 	constexpr std::uint16_t ZipCompressionStore   = 0;
 	constexpr std::uint16_t ZipCompressionDeflate = 8;
+
+
+	std::vector<std::byte> ReadFileBytes(const wchar_t* path)
+	{
+		std::vector<std::byte> data;
+		HANDLE file = CreateFileW(
+			path, GENERIC_READ, FILE_SHARE_READ, nullptr, OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL, nullptr
+		);
+		if( file == INVALID_HANDLE_VALUE )
+		{
+			return data;
+		}
+
+		LARGE_INTEGER fileSize = {};
+		if( GetFileSizeEx(file, &fileSize) == 0 || fileSize.QuadPart <= 0
+			|| fileSize.QuadPart > static_cast<LONGLONG>(0x7FFFFFFF) )
+		{
+			CloseHandle(file);
+			return data;
+		}
+
+		data.resize(static_cast<std::size_t>(fileSize.QuadPart));
+		DWORD bytesRead = 0;
+		if( ReadFile(
+			file, data.data(), static_cast<DWORD>(data.size()), &bytesRead,
+			nullptr
+		) == 0
+			|| bytesRead != data.size() )
+		{
+			data.clear();
+		}
+
+		CloseHandle(file);
+		return data;
+	}
+
+	bool GetOverlayPath(wchar_t* outPath, std::size_t outPathLen)
+	{
+		if( outPath == nullptr || outPathLen == 0 )
+		{
+			return false;
+		}
+
+		HMODULE module = nullptr;
+		if( GetModuleHandleExW(
+				GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS
+					| GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+				reinterpret_cast<LPCWSTR>(&GetOverlayPath), &module
+			) == 0 )
+		{
+			return false;
+		}
+
+		wchar_t modulePath[MAX_PATH] = {};
+		if( GetModuleFileNameW(module, modulePath, MAX_PATH) == 0 )
+		{
+			return false;
+		}
+
+		if( PathRemoveFileSpecW(modulePath) == FALSE )
+		{
+			return false;
+		}
+
+		return PathCombineW(outPath, modulePath, L"overlay-icon.png") != nullptr;
+	}
+
+	struct OverlayCache
+	{
+		std::vector<std::uint8_t> Rgba;
+		int                       Width  = 0;
+		int                       Height = 0;
+		bool                      Available = false;
+	};
+
+	OverlayCache LoadOverlay()
+	{
+		OverlayCache cache;
+		wchar_t overlayPath[MAX_PATH] = {};
+		if( !GetOverlayPath(overlayPath, MAX_PATH) )
+		{
+			return cache;
+		}
+
+		const auto bytes = ReadFileBytes(overlayPath);
+		if( bytes.empty() )
+		{
+			return cache;
+		}
+
+		int width = 0;
+		int height = 0;
+		int channels = 0;
+		stbi_uc* decoded = stbi_load_from_memory(
+			reinterpret_cast<const stbi_uc*>(bytes.data()),
+			static_cast<int>(bytes.size()), &width, &height, &channels, 4
+		);
+		if( decoded == nullptr || width <= 0 || height <= 0 )
+		{
+			return cache;
+		}
+
+		cache.Rgba.assign(decoded, decoded + (width * height * 4));
+		stbi_image_free(decoded);
+		cache.Width = width;
+		cache.Height = height;
+		cache.Available = true;
+		return cache;
+	}
+
+	const OverlayCache& GetOverlayCache()
+	{
+		static OverlayCache cache;
+		static std::once_flag loadOnce;
+		std::call_once(loadOnce, []() { cache = LoadOverlay(); });
+		return cache;
+	}
+
+	void BlendOverlay(
+		std::uint8_t* baseRgba, int baseWidth, int baseHeight,
+		const std::uint8_t* overlayRgba, int overlayWidth, int overlayHeight,
+		int dstX, int dstY
+	)
+	{
+		for( int y = 0; y < overlayHeight; ++y )
+		{
+			if( dstY + y < 0 || dstY + y >= baseHeight )
+			{
+				continue;
+			}
+			for( int x = 0; x < overlayWidth; ++x )
+			{
+				if( dstX + x < 0 || dstX + x >= baseWidth )
+				{
+					continue;
+				}
+
+				const int srcIndex = (y * overlayWidth + x) * 4;
+				const int dstIndex = ((dstY + y) * baseWidth + (dstX + x)) * 4;
+
+				const std::uint8_t srcA = overlayRgba[srcIndex + 3];
+				if( srcA == 0 )
+				{
+					continue;
+				}
+
+				const std::uint8_t invA = static_cast<std::uint8_t>(255 - srcA);
+
+				for( int c = 0; c < 3; ++c )
+				{
+					const std::uint8_t srcC = overlayRgba[srcIndex + c];
+					const std::uint8_t dstC = baseRgba[dstIndex + c];
+					baseRgba[dstIndex + c] = static_cast<std::uint8_t>(
+						(srcC * srcA + dstC * invA + 127) / 255
+					);
+				}
+
+				const std::uint8_t dstA = baseRgba[dstIndex + 3];
+				baseRgba[dstIndex + 3] = static_cast<std::uint8_t>(
+					(srcA + (dstA * invA + 127) / 255)
+				);
+			}
+		}
+	}
 } // namespace
 
 TiltThumbProvider::TiltThumbProvider() : ReferenceCount(1)
@@ -317,6 +483,43 @@ HRESULT TiltThumbProvider::GetThumbnail(
 		PixelData = std::move(Resized);
 	}
 
+
+
+	// Overlay Open Brush logo in the bottom-right corner.
+	const auto& overlay = GetOverlayCache();
+	if( overlay.Available )
+	{
+		const int maxOverlayW = (std::max)(1, Width / 4);
+		const int maxOverlayH = (std::max)(1, Height / 4);
+
+		const double scale = (std::min)(
+			static_cast<double>(maxOverlayW) / overlay.Width,
+			static_cast<double>(maxOverlayH) / overlay.Height
+		);
+
+		const int overlayW = static_cast<int>(overlay.Width * scale);
+		const int overlayH = static_cast<int>(overlay.Height * scale);
+
+		if( overlayW >= 4 && overlayH >= 4 )
+		{
+			std::vector<std::uint8_t> overlayResized(
+				static_cast<std::size_t>(overlayW) * overlayH * 4
+			);
+			stbir_resize_uint8_linear(
+				overlay.Rgba.data(), overlay.Width, overlay.Height, 0,
+				overlayResized.data(), overlayW, overlayH, 0, STBIR_RGBA
+			);
+
+			const int padding = (std::max)(2, (std::min)(Width, Height) / 32);
+			const int dstX = (std::max)(0, Width - overlayW - padding);
+			const int dstY = (std::max)(0, Height - overlayH - padding);
+
+			BlendOverlay(
+				reinterpret_cast<std::uint8_t*>(PixelData.data()), Width, Height,
+				overlayResized.data(), overlayW, overlayH, dstX, dstY
+			);
+		}
+	}
 	// RGBA to ABGR
 	const std::span<std::uint32_t> ThumbnailPixels(
 		PixelData.data(), static_cast<std::size_t>(Width) * Height
