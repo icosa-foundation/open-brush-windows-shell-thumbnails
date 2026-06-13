@@ -1,5 +1,5 @@
-cmake_minimum_required( VERSION 3.8.0 )
-project( SaiThumbs )
+cmake_minimum_required( VERSION 3.10 )
+project( TiltThumbs LANGUAGES CXX C RC )
 
 ### Standard
 set( CMAKE_CXX_STANDARD 20 )
@@ -62,18 +62,18 @@ foreach(
 endforeach(CurFlag)
 
 ### Dependencies
-add_subdirectory( external/libsai )
 add_subdirectory( external/mio EXCLUDE_FROM_ALL )
 
 ### Target
 include_directories(
 	include
+	resources
 )
 add_library(
-	SaiThumbs
+	TiltThumbs
 	SHARED
 
-	source/SaiThumbs.def
+	source/TiltThumbs.def
 
 	"${PROJECT_BINARY_DIR}/source/version.rc"
 
@@ -81,14 +81,12 @@ add_library(
 	source/stb_image.c
 
 	source/main.cpp
-	source/Sai1ThumbProvider.cpp
-	source/Sai2ThumbProvider.cpp
+	source/TiltThumbProvider.cpp
 	source/Globals.cpp
 )
 target_link_libraries(
 	${PROJECT_NAME}
 	PRIVATE
-	sai
 	mio::mio
 	Shlwapi.lib
 )
@@ -103,6 +101,14 @@ configure_file(
 	bin/uninstall.bat
 	${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_DIRECTORY}/uninstall.bat
 	COPYONLY
+)
+
+
+add_custom_command(
+	TARGET TiltThumbs POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+		"${CMAKE_SOURCE_DIR}/resources/overlay-icon.png"
+		"$<TARGET_FILE_DIR:TiltThumbs>/overlay-icon.png"
 )
 
 execute_process(
@@ -125,3 +131,47 @@ add_executable(
 	comtest
 	tests/comtest.cpp
 )
+
+### Installer
+# Find NSIS (optional - won't fail build if not found)
+find_program(MAKENSIS_EXE makensis.exe
+	PATHS
+		"$ENV{ProgramFiles}/NSIS"
+		"$ENV{ProgramFiles\(x86\)}/NSIS"
+	DOC "NSIS compiler"
+)
+
+if(MAKENSIS_EXE)
+	message(STATUS "NSIS found: ${MAKENSIS_EXE}")
+
+	set(INSTALLER_OUTPUT "${CMAKE_SOURCE_DIR}/installer/TiltThumbs-Installer.exe")
+
+	# Add custom target to build installer
+	add_custom_target(installer
+		COMMAND "${MAKENSIS_EXE}"
+			"/DINPUT_BIN_DIR=$<SHELL_PATH:$<TARGET_FILE_DIR:TiltThumbs>>"
+			"/DINSTALLER_OUTFILE=$<SHELL_PATH:$<TARGET_FILE_DIR:TiltThumbs>/TiltThumbs-Installer.exe>"
+			"${CMAKE_SOURCE_DIR}/installer/TiltThumbs.nsi"
+		COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			"$<TARGET_FILE_DIR:TiltThumbs>/TiltThumbs-Installer.exe"
+			"${INSTALLER_OUTPUT}"
+		WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/installer"
+		DEPENDS TiltThumbs
+		COMMENT "Building NSIS installer..."
+		VERBATIM
+	)
+
+	# Optionally build installer automatically in Release builds
+	# Uncomment to enable:
+	# add_custom_command(TARGET TiltThumbs POST_BUILD
+	# 	COMMAND "${MAKENSIS_EXE}" "${CMAKE_SOURCE_DIR}/installer/TiltThumbs.nsi"
+	# 	WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/installer"
+	# 	COMMENT "Building NSIS installer..."
+	# 	VERBATIM
+	# )
+
+	message(STATUS "Installer target added. Run: cmake --build build --target installer")
+else()
+	message(STATUS "NSIS not found - installer target not available")
+	message(STATUS "Download NSIS from: https://nsis.sourceforge.io/Download")
+endif()

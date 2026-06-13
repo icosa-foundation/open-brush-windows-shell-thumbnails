@@ -1,20 +1,21 @@
 #pragma once
-#include <atomic>
-#include <memory>
 
+#include <atomic>
+#include <cstddef>
+#include <span>
+#include <vector>
+
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
+#endif
 #include <Propsys.h>
 #include <thumbcache.h>
 
-#include <sai2.hpp>
-
-#include <mio/mmap.hpp>
-
-class Sai2ThumbProvider : public IThumbnailProvider, IInitializeWithFile
+class TiltThumbProvider : public IThumbnailProvider, IInitializeWithFile
 {
 public:
-	Sai2ThumbProvider();
-	virtual ~Sai2ThumbProvider();
+	TiltThumbProvider();
+	virtual ~TiltThumbProvider();
 
 	// IUnknown
 	virtual HRESULT _stdcall QueryInterface(
@@ -34,7 +35,10 @@ public:
 	) throw() override;
 
 private:
+	static std::vector<std::byte>
+		FindThumbnailPng(std::span<const std::byte> Bytes);
+
 	std::atomic<std::size_t> ReferenceCount;
 
-	mio::mmap_source MappedFile;
+	std::vector<std::byte> FileData;
 };
